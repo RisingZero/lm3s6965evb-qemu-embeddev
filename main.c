@@ -9,8 +9,6 @@
 #include "hw_sysctl.h"
 #include "hw_uart.h"
 #include "sysctl.h"
-#include "gpio.h"
-#include "grlib.h"
 #include "osram128x64x4.h"
 #include "uart.h"
 
@@ -22,18 +20,22 @@
 #define mainFULL_SCALE						( 15 )
 #define ulSSI_FREQUENCY						( 3500000UL )
 
+#include "myutils.h"
+
 static void setup_hardware(void);
-static void print(const char *string);
 
 int main(void) {
 
     setup_hardware();
     OSRAM128x64x4Enable(ulSSI_FREQUENCY);
     OSRAM128x64x4Init(ulSSI_FREQUENCY);
-    OSRAM128x64x4Clear();
 
-    print("Daje Roma\n");
-    OSRAM128x64x4StringDraw("Daje !", 0, 0, mainFULL_SCALE);
+    char s[100];
+    input("name:\n> ", s, 2);
+    print(s);
+    print(NULL);
+    OSRAM128x64x4Clear();
+    OSRAM128x64x4StringDraw(s, 0, 30, mainFULL_SCALE);
 
     for( ;; );
 }
@@ -53,11 +55,4 @@ void setup_hardware(void) {
     initialisation. */
     SysCtlPeripheralEnable( SYSCTL_PERIPH_UART0 );
     UARTEnable( UART0_BASE );
-}
-
-static void print(const char *string) {
-    while (*string != 0x00) {
-        UARTCharPut( UART0_BASE, *string );
-        string++;
-    }
 }

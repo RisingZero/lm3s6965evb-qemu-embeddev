@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="QEMU" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-cpu cortex-m3 -machine lm3s6965evb -nographic -kernel &quot;$CMakeCurrentProductFile$&quot; -d guest_errors -semihosting -semihosting-config enable=on,target=native -serial mon:stdio" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="caeos_project" TARGET_NAME="firmware" CONFIG_NAME="ARM-Debug" RUN_PATH="/usr/bin/qemu-system-arm">
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>

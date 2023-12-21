@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)  # CMake version check
 project(caeos_project)               # Create project "simple_example"
 
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+set(CMAKE_CXX_STANDARD 17)            # Enable c++17 standard
 
 # Set linker script for machine target
 set(LINKER_SCRIPT "${PROJECT_SOURCE_DIR}/linker.ld")
@@ -17,6 +17,7 @@ add_executable(firmware ${SOURCE_FILES})
 target_include_directories(
         firmware
         PUBLIC
+        include
 )
 
 # ARM CMSIS
