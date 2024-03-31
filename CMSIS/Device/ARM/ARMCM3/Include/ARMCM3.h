@@ -36,6 +36,7 @@ extern "C" {
 typedef enum IRQn
 {
 /* -------------------  Processor Exceptions Numbers  ----------------------------- */
+  Reset_IRQn                    = -15,     /* 1  Reset Vector, invoked on Power up and warm reset */
   NonMaskableInt_IRQn           = -14,     /*  2 Non Maskable Interrupt */
   HardFault_IRQn                = -13,     /*  3 HardFault Interrupt */
   MemoryManagement_IRQn         = -12,     /*  4 Memory Management Interrupt */

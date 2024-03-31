@@ -40,6 +40,8 @@ extern "C"
 {
 #endif
 
+#include "hw_types.h"
+
 //*****************************************************************************
 //
 // The following are values that can be passed to the

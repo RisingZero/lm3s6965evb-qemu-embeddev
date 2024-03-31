@@ -30,6 +30,13 @@
 extern uint32_t __INITIAL_SP;
 
 extern __NO_RETURN void __PROGRAM_START(void);
+/* FreeRTOS handlers */
+extern void vPortSVCHandler         (void);
+extern void xPortPendSVHandler      (void);
+extern void xPortSysTickHandler     (void);
+extern void Timer0IntHandler        (void);
+extern void vT2InterruptHandler     (void);
+extern void vT3InterruptHandler     (void);
 
 /*----------------------------------------------------------------------------
   Internal References
@@ -46,22 +53,9 @@ void HardFault_Handler      (void) __attribute__ ((weak));
 void MemManage_Handler      (void) __attribute__ ((weak, alias("Default_Handler")));
 void BusFault_Handler       (void) __attribute__ ((weak, alias("Default_Handler")));
 void UsageFault_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void SVC_Handler            (void) __attribute__ ((weak, alias("Default_Handler")));
 void DebugMon_Handler       (void) __attribute__ ((weak, alias("Default_Handler")));
-void PendSV_Handler         (void) __attribute__ ((weak, alias("Default_Handler")));
-void SysTick_Handler        (void) __attribute__ ((weak, alias("Default_Handler")));
 
-void Interrupt0_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt1_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt2_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt3_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt4_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt5_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt6_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt7_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt8_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-void Interrupt9_Handler     (void) __attribute__ ((weak, alias("Default_Handler")));
-
+void IntDefaultHandler      (void) __attribute__ ((weak, alias("Default_Handler")));
 
 /*----------------------------------------------------------------------------
   Exception / Interrupt Vector table
@@ -85,24 +79,56 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[240];
   0,                                        /*     Reserved */
   0,                                        /*     Reserved */
   0,                                        /*     Reserved */
-  SVC_Handler,                              /*  -5 SVC Handler */
+  vPortSVCHandler,                              /*  -5 SVC Handler */
   DebugMon_Handler,                         /*  -4 Debug Monitor Handler */
   0,                                        /*     Reserved */
-  PendSV_Handler,                           /*  -2 PendSV Handler */
-  SysTick_Handler,                          /*  -1 SysTick Handler */
+  xPortPendSVHandler,                           /*  -2 PendSV Handler */
+  xPortSysTickHandler,                          /*  -1 SysTick Handler */
 
-  /* Interrupts */
-  Interrupt0_Handler,                       /*   0 Interrupt 0 */
-  Interrupt1_Handler,                       /*   1 Interrupt 1 */
-  Interrupt2_Handler,                       /*   2 Interrupt 2 */
-  Interrupt3_Handler,                       /*   3 Interrupt 3 */
-  Interrupt4_Handler,                       /*   4 Interrupt 4 */
-  Interrupt5_Handler,                       /*   5 Interrupt 5 */
-  Interrupt6_Handler,                       /*   6 Interrupt 6 */
-  Interrupt7_Handler,                       /*   7 Interrupt 7 */
-  Interrupt8_Handler,                       /*   8 Interrupt 8 */
-  Interrupt9_Handler                        /*   9 Interrupt 9 */
-                                            /* Interrupts 10 .. 223 are left out */
+  IntDefaultHandler,                      // GPIO Port A
+  IntDefaultHandler,                      // GPIO Port B
+  IntDefaultHandler,                      // GPIO Port C
+  IntDefaultHandler,                      // GPIO Port D
+  IntDefaultHandler,                      // GPIO Port E
+  IntDefaultHandler,                      // UART0 Rx and Tx
+  IntDefaultHandler,                      // UART1 Rx and Tx
+  IntDefaultHandler,                      // SSI Rx and Tx
+  IntDefaultHandler,                      // I2C Master and Slave
+  IntDefaultHandler,                      // PWM Fault
+  IntDefaultHandler,                      // PWM Generator 0
+  IntDefaultHandler,                      // PWM Generator 1
+  IntDefaultHandler,                      // PWM Generator 2
+  IntDefaultHandler,                      // Quadrature Encoder
+  IntDefaultHandler,                      // ADC Sequence 0
+  IntDefaultHandler,                      // ADC Sequence 1
+  IntDefaultHandler,                      // ADC Sequence 2
+  IntDefaultHandler,                      // ADC Sequence 3
+  IntDefaultHandler,                      // Watchdog timer
+  IntDefaultHandler,                       // Timer 0 subtimer A
+  IntDefaultHandler,                      // Timer 0 subtimer B
+  IntDefaultHandler,                      // Timer 1 subtimer A
+  IntDefaultHandler,                      // Timer 1 subtimer B
+  IntDefaultHandler,                    // Timer 2 subtimer A
+  IntDefaultHandler,                      // Timer 2 subtimer B
+  IntDefaultHandler,                      // Analog Comparator 0
+  IntDefaultHandler,                      // Analog Comparator 1
+  IntDefaultHandler,                      // Analog Comparator 2
+  IntDefaultHandler,                      // System Control (PLL, OSC, BO)
+  IntDefaultHandler,                      // FLASH Control
+  IntDefaultHandler,                      // GPIO Port F
+  IntDefaultHandler,                      // GPIO Port G
+  IntDefaultHandler,                      // GPIO Port H
+  IntDefaultHandler,                      // UART2 Rx and Tx
+  IntDefaultHandler,                      // SSI1 Rx and Tx
+  IntDefaultHandler,                    // Timer 3 subtimer A
+  IntDefaultHandler,                      // Timer 3 subtimer B
+  IntDefaultHandler,                      // I2C1 Master and Slave
+  IntDefaultHandler,                      // Quadrature Encoder 1
+  IntDefaultHandler,                      // CAN0
+  IntDefaultHandler,                      // CAN1
+  0,                                      // Reserved
+  IntDefaultHandler,                      // Ethernet
+  IntDefaultHandler                       // Hibernate
 };
 
 #if defined ( __GNUC__ )
@@ -112,7 +138,7 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[240];
 /*----------------------------------------------------------------------------
   Reset Handler called on controller reset
  *----------------------------------------------------------------------------*/
-__NO_RETURN void Reset_Handler(void)
+__NO_RETURN void Reset_Handler( void )
 {
   SystemInit();                             /* CMSIS System Initialization */
   __PROGRAM_START();                        /* Enter PreMain (C library entry point) */
@@ -127,7 +153,7 @@ __NO_RETURN void Reset_Handler(void)
 /*----------------------------------------------------------------------------
   Hard Fault Handler
  *----------------------------------------------------------------------------*/
-void HardFault_Handler(void)
+void HardFault_Handler( void )
 {
   while(1);
 }
@@ -135,7 +161,7 @@ void HardFault_Handler(void)
 /*----------------------------------------------------------------------------
   Default Handler for Exceptions / Interrupts
  *----------------------------------------------------------------------------*/
-void Default_Handler(void)
+void Default_Handler( void )
 {
   while(1);
 }

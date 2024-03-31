@@ -29,7 +29,6 @@
   Define clocks
  *----------------------------------------------------------------------------*/
 #define  XTAL            (50000000UL)     /* Oscillator frequency */
-
 #define  SYSTEM_CLOCK    (XTAL / 2U)
 
 /*----------------------------------------------------------------------------
@@ -46,7 +45,7 @@ uint32_t SystemCoreClock = SYSTEM_CLOCK;  /* System Core Clock Frequency */
 /*----------------------------------------------------------------------------
   System Core Clock update function
  *----------------------------------------------------------------------------*/
-void SystemCoreClockUpdate (void)
+void SystemCoreClockUpdate( void )
 {
   SystemCoreClock = SYSTEM_CLOCK;
 }
@@ -54,12 +53,10 @@ void SystemCoreClockUpdate (void)
 /*----------------------------------------------------------------------------
   System initialization function
  *----------------------------------------------------------------------------*/
-void SystemInit (void)
+void SystemInit( void )
 {
-
 #if defined (__VTOR_PRESENT) && (__VTOR_PRESENT == 1U)
   SCB->VTOR = (uint32_t) &(__VECTOR_TABLE[0]);
 #endif
-
   SystemCoreClock = SYSTEM_CLOCK;
 }

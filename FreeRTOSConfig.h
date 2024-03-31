@@ -41,7 +41,7 @@
 
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK				0
-#define configUSE_TICK_HOOK				1
+#define configUSE_TICK_HOOK				0
 #define configCPU_CLOCK_HZ				( ( unsigned long ) 50000000 )
 #define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 90 )
@@ -55,7 +55,7 @@
 #define configCHECK_FOR_STACK_OVERFLOW	2
 #define configUSE_QUEUE_SETS			1
 #define configUSE_COUNTING_SEMAPHORES	1
-#define configUSE_STATIC_ALLOCATION     1
+#define configUSE_STATIC_ALLOCATION     0
 #define configTASK_NOTIFICATION_ARRAY_ENTRIES 3
 
 #define configMAX_PRIORITIES			( 6UL )
@@ -84,7 +84,7 @@ to exclude the API function. */
 #define INCLUDE_xTaskGetIdleTaskHandle			1
 #define INCLUDE_xSemaphoreGetMutexHolder		1
 #define INCLUDE_eTaskGetState					1
-#define INCLUDE_xTimerPendFunctionCall			1
+#define INCLUDE_xTimerPendFunctionCall			0
 
 /* This demo makes use of one or more example stats formatting functions.  These
 format the raw data provided by the uxTaskGetSystemState() function in to human
